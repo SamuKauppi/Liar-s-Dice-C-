@@ -1,22 +1,24 @@
 RULES TO LIAR's DICE
-
-- Each player has a cup that has 6 dice
-- Each player can only see their own 6 dice
+- Each player starts with a cup that has 5 dice (number of dices can change)
+- Each player can only see their own dices
+- If player wins a round they get to remove one dice from their cup
+- Winner is the player who has no dices left
 
 Bidding
 - On their turn, player can bid on how many copies are there in total of a single dice 
 (For Example: there are 6 copies of the dice 4)
-- Player can only call the same amount or higher than the previous.
+- Player can only bid for the same amount or higher than the previous.
 (For Example: if previous player called 6 copies of 4, the current player can only call
  6 or higher count)
-- Player can't make the same exact call as the previous player and if the same count is called
- for an round, the starting player has to call higher count.
+- When a player is bidding for the same count, they can't bid a lower or same dice value as the
+previous player
+- if the same count is called for an round, the starting player has to call higher count.
 
 Calling
 - On their turn, player can also call the previous player a liar 
 - When called, all of the dice's are revealed and the total amount of a face is counted
-- If there are less copies of the dice taht the previous player bid for, the previous player
-loses the round
-
-Extra:
 - Dice face of 1 is wild and counts for every dice
+- If there are less copies of the dice then the previous player bid for, the previous player
+loses the round
+- Winner of the round takes one dice from their cup and the bids are reset
+
