@@ -1,7 +1,9 @@
 #pragma once
 #include <random>
 #include <vector>
-
+/// <summary>
+/// Contains dices that can be edited (reroll, etc.)
+/// </summary>
 class Cup
 {
 public:
@@ -20,7 +22,7 @@ public:
 	/// </summary>
 	void reduce_size();
 	/// <summary>
-	/// Checks how many copies of given dice does teh cup have
+	/// Checks how many copies of given dice does the cup have
 	/// </summary>
 	/// <param name="dice"></param>
 	/// <returns></returns>

@@ -1,26 +1,30 @@
 #include "Player.h"
 #include <unordered_map>
 
-Player::Player(int ID)
+Player::Player(int playerID)
+	: playerID(playerID), _cup(std::make_unique<Cup>()) // Initialize _cup
 {
-	_cup = new Cup();
-	playerID = ID;
 }
 
-void Player::reroll_cup()
-{
-	_cup->roll_dice();
+void Player::reroll_cup() {
+	if (_cup) {
+		_cup->roll_dice(); // Assuming Cup has a reroll method
+	}
 }
 
 int Player::contains_dice(int dice)
 {
-	int count = 0;
-	for (int d : _cup->dices)
+	if(_cup)
 	{
-		if (d == 1 || d == dice)
-			count++;
+		int count = 0;
+		for (int d : _cup->dices)
+		{
+			if (d == 1 || d == dice)
+				count++;
+		}
+		return count;
 	}
-	return count;
+	return 0;
 }
 
 int Player::get_cup_size()
@@ -42,11 +46,6 @@ void Player::print_dice()
 std::vector<int> Player::get_dices() const
 {
 	return _cup->dices;
-}
-
-Player::~Player()
-{
-	delete _cup;
 }
 
 AI_Player::AI_Player(int player_num) : Player(player_num) {
@@ -123,7 +122,7 @@ void AI_Player::evaluate_bid(int bid[2], int prev_bid[2], int dice_count, int tu
 	{
 		float new_pob;
 		calculate_own_probability(dice_count, target_dice, count, new_pob);
-		if (new_pob < 0.15f)
+		if (new_pob < 0.2f)
 		{ 
 			return; 
 		}
@@ -134,11 +133,11 @@ void AI_Player::evaluate_bid(int bid[2], int prev_bid[2], int dice_count, int tu
 	bid[1] = target_dice;
 
 
-	if (count > dice_count || 
-		(count <= prev_bid[0] && target_dice <= prev_bid[1]) || 
-		count <= 0) {
-		std::cout << "";
-	}
+	//if (count > dice_count || 
+	//	(count <= prev_bid[0] && target_dice <= prev_bid[1]) || 
+	//	count <= 0) {
+	//	std::cout << "";
+	//}
 }
 
 void AI_Player::reset_ai()
@@ -148,7 +147,7 @@ void AI_Player::reset_ai()
 
 void AI_Player::should_copy_bid(int has_prev_dices, int& target_dice, int  prev_bid[2]) const
 {
-	if (has_prev_dices > 0 && target_dice != prev_bid[1])
+	if (has_prev_dices > _dice_count_to_bid / 2 && target_dice != prev_bid[1])
 	{
 		// Count how many copies hypothetically could there be of 
 		// the previous die
@@ -247,11 +246,11 @@ bool AI_Player::should_call_liar(float& probability, int& has_prev_dices)
 
 	if (probability < 0.16f)
 	{
-		if (should_call < 3)
+		if (should_call < 4)
 			return true;
 	}
 
-	if (probability < 0.01f)
+	if (probability < 0.1f)
 	{
 		return true;
 	}
@@ -313,4 +312,6 @@ void AI_Player::calculate_probability(float& probability, int n, int x)
 
 	// Combine to get the probability
 	probability = coeff * p_pow_x * q_pow_n_minus_x;
+
+	std::cout << "\nProbability: " << probability;
 }

@@ -30,6 +30,9 @@
     <ClCompile Include="DrawDice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Render_text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DrawDice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render_text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,6 +2,12 @@
 
 void DrawDice::draw_shape(SDL_Renderer* renderer, int type_id) const
 {
+	// Clear old draw
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_Rect rect = {_relative_x + 1, _relative_y + 1, _dice_w - 2, _dice_h - 2};
+	SDL_RenderFillRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	// Draw new
 	switch (type_id)
 	{
 	case 1:
@@ -52,7 +58,7 @@ void DrawDice::draw_dot(SDL_Renderer* renderer, int x_i, int y_i) const
 	SDL_RenderFillRect(renderer, &dot);
 }
 
-void DrawDice::get_dot_relative_pos(int& pos, int& i, int axis, int size) const
+void DrawDice::get_dot_relative_pos(int& pos, const int& i, int axis, int size) const
 {
 	int padding = size / _padding_div;
 	pos = padding + i * (size / 3);

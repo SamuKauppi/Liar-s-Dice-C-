@@ -25,7 +25,7 @@ void Cup::reduce_size()
 int Cup::how_many_of_x_dice(int x)
 {
     int count = 0;
-    std::for_each(dices.begin(), dices.end(), [&count, x](int& i) {
+    std::for_each(dices.begin(), dices.end(), [&count, x](const int& i) {
         if (i == x || i == 1)
         {
             ++count;

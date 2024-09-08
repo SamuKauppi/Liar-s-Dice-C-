@@ -1,24 +1,33 @@
 #pragma once
 #include "Player.h"
 #include <vector>
+#include <memory>
 
+/// <summary>
+/// Game state handles the entire game
+/// </summary>
+/// <param name="player_count">How many players can be created (I originally planned there to be multiple)</param>
 class GameState
 {
 public:
 	// Players
-	std::vector<Player*> players;
+	std::vector<std::shared_ptr<Player>> players;
 	// Turnplayer
-	Player* turnplayer;
+	std::shared_ptr<Player> turnplayer;
 	// Number of dices total between all players
 	int d_count = 0;
 	// Last bid (x copies of x dice)
 	int d_last_bid[2] = { 0, 0 };
 
+	/// <summary>
+	/// Creates game state with given players players
+	/// </summary>
+	/// <param name="player_count"></param>
 	GameState(int player_count);
-	~GameState();
+	~GameState() = default;
 
 	/// <summary>
-	/// Start a new round of liar's dice
+	/// Start a new round of liar's dice. Removes a die from the winner if there was one
 	/// </summary>
 	/// <param name="winner_id">Who was the winner of last round (-1 = no winner)</param>
 	/// <param name="loser_id">Who was the loser of the last round (-1 = no loser)</param>

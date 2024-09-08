@@ -1,9 +1,12 @@
 #pragma once
 #include <random>
 #include <iostream>
+#include <memory>
 
 #include "Cup.h"
-
+/// <summary>
+/// Player class
+/// </summary>
 class Player
 {
 public:
@@ -24,8 +27,8 @@ public:
 	void reroll_cup();
 
 	/// <summary>
-	/// Returns the number of dices that this player has
-	/// Counts 1's as the target dice
+	/// Returns the number of dices that this player has.
+	/// Counts 1's as the target dice since it's wild
 	/// </summary>
 	/// <param name="dice">the dice looked for</param>
 	/// <returns>Count of dices that the cup has</returns>
@@ -47,15 +50,25 @@ public:
 	/// </summary>
 	void print_dice();
 
+	/// <summary>
+	/// Get dices that this player has
+	/// </summary>
+	/// <returns></returns>
 	std::vector<int> get_dices() const;
 
-	virtual ~Player();
+	/// <summary>
+	/// Default contructor
+	/// </summary>
+	virtual ~Player() = default;
 
 protected:
 	// Contains die and methods to interact with the die
-	Cup* _cup;
+	std::unique_ptr<Cup> _cup;
 };
 
+/// <summary>
+/// AI player derives everything from Player and has ai logic
+/// </summary>
 class AI_Player : public Player
 {
 public:
@@ -64,7 +77,12 @@ public:
 	/// Creates player but sets is_ai = true
 	/// </summary>
 	/// <param name="player_num"></param>
-	AI_Player(int player_num);;
+	AI_Player(int player_num);
+
+	/// <summary>
+	/// Default constructor
+	/// </summary>
+	~AI_Player() = default;
 
 	/// <summary>
 	/// Evaluates the last bid and makes a new bid or returns false to call a liar
@@ -145,7 +163,7 @@ private:
 	/// <param name="probability"></param>
 	/// <param name="x"></param>
 	/// <param name="n"></param>
-	void calculate_probability(float& probability, int x, int n);
+	void calculate_probability(float& probability, int n, int x);
 };
 
 
