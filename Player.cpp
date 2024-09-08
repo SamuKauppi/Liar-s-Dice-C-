@@ -39,6 +39,11 @@ void Player::print_dice()
 		std::cout << d << " ";
 }
 
+std::vector<int> Player::get_dices() const
+{
+	return _cup->dices;
+}
+
 Player::~Player()
 {
 	delete _cup;

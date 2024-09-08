@@ -46,6 +46,9 @@ public:
 	/// Prints the die that are in the cup
 	/// </summary>
 	void print_dice();
+
+	std::vector<int> get_dices() const;
+
 	virtual ~Player();
 
 protected:
