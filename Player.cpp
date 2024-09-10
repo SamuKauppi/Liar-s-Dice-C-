@@ -106,26 +106,34 @@ void AI_Player::evaluate_bid(int bid[2], int prev_bid[2], int dice_count, int tu
 	// Use the best dice (most copies or highest) within own dices (_dice_to_bid) 
 	// but with a chance to lie
 	// This gives rough estimate what the ai wants to pick
-	int lie_chance = is_first ? rand() % 2 : rand() % 4;
+	int lie_chance = 0;
+	if (is_first) {
+		lie_chance = rand() % 2;  // 50% chance to lie on the first move
+	}
+	else {
+		// Increased lie chance if AI is in a weaker position (fewer dice)
+		lie_chance = (get_cup_size() < dice_count / 2) ? rand() % 3 : rand() % 4;  // More risky lies when AI has fewer dice
+	}
 	int target_dice = lie_chance == 0 ? rand() % 5 + 2 : _dice_to_bid;
 
 	// Check if it's valid to copy the previous bid
 	if (!is_first && lie_chance != 0)
 		should_copy_bid(has_prev_dices, target_dice, prev_bid);
 
-	// Pick how many dices the ai wants to pick
+	// Select the number of dice AI wants to bid based on probability and previous bid
 	int count;
 	select_dice_count_for_bid(probability, target_dice, dice_count, prev_bid, count);
 
 	// Calculate if making a new bid is too unrealistic
-	if (!is_first)
-	{
+	if (!is_first) {
 		float new_pob;
 		calculate_own_probability(dice_count, target_dice, count, new_pob);
 
-		if (new_pob < 0.2f)
-		{ 
-			return; 
+		// Allow riskier bids if AI has few dice left, adding a layer of risk-taking behavior
+		if (new_pob < 0.4f) {
+			if (get_cup_size() > dice_count / 2 || new_pob < 0.1f) {
+				return;  // Only return if bid is extremely unrealistic or AI has many dice left
+			}
 		}
 	}
 
@@ -210,14 +218,22 @@ void AI_Player::calculate_own_probability(int dice_count, int target_dice, int c
 	int new_n = dice_count - get_cup_size();
 	int new_x = count - _cup->how_many_of_x_dice(target_dice);
 
-	if (new_x > 0 && new_x <= new_n)
-	{
-		calculate_probability(probability, new_n, new_x);
-	}
-	else 
+	// Case 1: If AI already has enough of the target dice, probability is 1.0
+	if (new_x <= 0)
 	{
 		probability = 1.0f;
+		return;
 	}
+
+	// Case 2: If more dice are needed than exist in the unknown pool, the bid is impossible
+	if (new_x > new_n)
+	{
+		probability = 0.0f;
+		return;
+	}
+
+	// Case 3: Calculate the probability if new_x dice are still needed from new_n unknown dice
+	calculate_probability(probability, new_n, new_x);
 }
 
 float AI_Player::binomial_coefficient(int& n, int& x) {
@@ -294,7 +310,7 @@ void AI_Player::get_most_common_die()
 
 void AI_Player::calculate_probability(float& probability, int n, int x)
 {
-	// Use the bias to adjust the probability of success
+	// Calculate the chance of success and failure ( 2 / 6 because 2 of the 6 faces of a die can be correct)
 	float p = 2.0f / 6.0f;
 	float q = 1.0f - p;
 
