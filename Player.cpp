@@ -97,7 +97,7 @@ void AI_Player::evaluate_bid(int bid[2], int prev_bid[2], int dice_count, int tu
 		// Check if the ai should call a liar and return if yes
 		if (should_call_liar(probability, has_prev_dices))
 		{
-			std::cout << "\nProbability: " << probability;
+			std::cout << "\nCalling lie! Probability: " << probability;
 			return;
 		}
 	}
@@ -122,6 +122,7 @@ void AI_Player::evaluate_bid(int bid[2], int prev_bid[2], int dice_count, int tu
 	{
 		float new_pob;
 		calculate_own_probability(dice_count, target_dice, count, new_pob);
+
 		if (new_pob < 0.2f)
 		{ 
 			return; 
@@ -206,7 +207,7 @@ void AI_Player::select_dice_count_for_bid(float probability, int target_dice, in
 
 void AI_Player::calculate_own_probability(int dice_count, int target_dice, int count, float& probability)
 {
-	int new_n = dice_count - _cup->how_many_of_x_dice(target_dice);
+	int new_n = dice_count - get_cup_size();
 	int new_x = count - _cup->how_many_of_x_dice(target_dice);
 
 	if (new_x > 0 && new_x <= new_n)
@@ -244,13 +245,7 @@ bool AI_Player::should_call_liar(float& probability, int& has_prev_dices)
 			return true;
 	}
 
-	if (probability < 0.16f)
-	{
-		if (should_call < 4)
-			return true;
-	}
-
-	if (probability < 0.1f)
+	if (probability < 0.2f)
 	{
 		return true;
 	}
@@ -313,5 +308,5 @@ void AI_Player::calculate_probability(float& probability, int n, int x)
 	// Combine to get the probability
 	probability = coeff * p_pow_x * q_pow_n_minus_x;
 
-	std::cout << "\nProbability: " << probability;
+	std::cout << "\nBid probability: " << probability;
 }
