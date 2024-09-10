@@ -130,8 +130,8 @@ void AI_Player::evaluate_bid(int bid[2], int prev_bid[2], int dice_count, int tu
 		calculate_own_probability(dice_count, target_dice, count, new_pob);
 
 		// Allow riskier bids if AI has few dice left, adding a layer of risk-taking behavior
-		if (new_pob < 0.4f) {
-			if (get_cup_size() > dice_count / 2 || new_pob < 0.1f) {
+		if (new_pob < 0.1f) {
+			if (get_cup_size() > dice_count / 2 || new_pob < 0.01f) {
 				return;  // Only return if bid is extremely unrealistic or AI has many dice left
 			}
 		}
@@ -176,8 +176,10 @@ void AI_Player::select_dice_count_for_bid(float probability, int target_dice, in
 	if (probability < 1.0f)
 	{
 		// if probability is not sure 
-		// increase the count for the bid only by 1 if needed
-		count = target_dice <= prev_bid[1] ? prev_bid[0] + 1 : prev_bid[0];
+		// increase the count for the bid based on probability.
+		// The less sure it is, the less it should increase it
+		int max_increase = (probability < 0.1f) ? 1 : (probability < 0.16f) ? 2 : 3;
+		count = target_dice <= prev_bid[1] ? prev_bid[0] + rand() % max_increase + 1 : prev_bid[0];
 	}
 	else
 	{
@@ -208,6 +210,7 @@ void AI_Player::select_dice_count_for_bid(float probability, int target_dice, in
 			count = _cup->how_many_of_x_dice(target_dice) + rand() % 2;
 		}
 	}
+
 	// Ensure the count doesn't exceed the total dice count
 	// or is lower or same as the previous bid
 	count = std::max(prev_bid[0] + 1, std::min(count, d_count));
@@ -236,32 +239,36 @@ void AI_Player::calculate_own_probability(int dice_count, int target_dice, int c
 	calculate_probability(probability, new_n, new_x);
 }
 
-float AI_Player::binomial_coefficient(int& n, int& x) {
+float AI_Player::binomial_coefficient(int n, int x) {
+	// Use local x to avoid modifying the parameter
 	if (x > n - x)
 		x = n - x;
-	float coeff = 1.0f;
-	for (float i = 0; i < x; ++i) {
-		coeff *= (n - i) / (i + 1);
+
+	int coeff = 1; // Start as an integer
+	for (int i = 0; i < x; ++i) {
+		coeff *= (n - i);
+		coeff /= (i + 1);
 	}
-	return coeff;
+
+	return static_cast<float>(coeff); // Return as float
 }
 
 bool AI_Player::should_call_liar(float& probability, int& has_prev_dices)
 {
-	int should_call = rand() % 6;
-	if (probability < 0.33f)
+	int should_call = rand() % 8;
+	if (probability < 0.2f)
 	{
 		if (has_prev_dices == 3 && should_call == 0)
 			return true;
 
-		if (has_prev_dices == 4 && (should_call >= 0 && should_call < 2))
+		if (has_prev_dices == 4 && (should_call < 3))
 			return true;
 		
-		if (has_prev_dices > 4 && should_call < 3)
+		if (has_prev_dices > 4 && should_call < 4)
 			return true;
 	}
 
-	if (probability < 0.2f)
+	if (probability < 0.05f)
 	{
 		return true;
 	}
@@ -324,5 +331,5 @@ void AI_Player::calculate_probability(float& probability, int n, int x)
 	// Combine to get the probability
 	probability = coeff * p_pow_x * q_pow_n_minus_x;
 
-	std::cout << "\nBid probability: " << probability;
+	std::cout << "\nBid probability: " << probability << " n: " << n << ", x: " << x;
 }

@@ -130,7 +130,7 @@ private:
 	/// <param name="n">Number of trials</param>
 	/// <param name="x">Number of successes</param>
 	/// <returns>Binomial coefficient</returns>
-	float binomial_coefficient(int& n, int& x);
+	float binomial_coefficient(int n, int x);
 
 	/// <summary>
 	/// Evaluates probability and handles logic deciding if the ai should call a liar
